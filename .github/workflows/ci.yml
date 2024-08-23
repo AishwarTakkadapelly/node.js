@@ -24,12 +24,12 @@ jobs:
     - name: Ensure tsnd has execute permissions
       run: chmod +x ./node_modules/.bin/tsnd
 
-    # Commented out to ignore tests
+    - name: Build Project
+      run: npm run build  # Use build command to compile TypeScript code
+
+    # Optionally, you could include a test step if tests are available
     # - name: Run Tests
     #   run: npm test
-
-    - name: Build Project
-      run: npm run start  # Assuming 'build' is the correct script for your build
 
   deploy:
     runs-on: ubuntu-latest
@@ -69,5 +69,5 @@ jobs:
           cd /home/ubuntu/app
           npm install
           pm2 stop all || true
-          pm2 start npm --name "my-app" -- run start
+          pm2 start npm --name "my-app" -- start
         EOF
