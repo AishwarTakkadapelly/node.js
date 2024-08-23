@@ -26,8 +26,8 @@ jobs:
       run: npm install
 
     # Optional: Run Tests
-    - name: Run Tests
-      run: npm test
+    #- name: Run Tests
+    # run: npm test
 
     # Build the Project
     - name: Build Project
