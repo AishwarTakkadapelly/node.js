@@ -3,10 +3,10 @@ name: CI/CD Pipeline for Node.js
 on:
   push:
     branches:
-      - main  # Trigger the workflow on push to the main branch
+      - main
   pull_request:
     branches:
-      - main  # Trigger the workflow on pull request to the main branch
+      - main
 
 jobs:
   build:
@@ -18,20 +18,15 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16' # Specify Node.js version
+        node-version: '16'
 
     - name: Install Dependencies
       run: npm install
-
-   # - name: Build
-   #   run: npm run build # Adjust if you have a build script
 
     - name: Build Docker Image
       run: |
         docker build -t ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} .
         docker tag ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}
-      env:
-        DOCKER_BUILDKIT: 1
 
   deploy:
     runs-on: ubuntu-latest
