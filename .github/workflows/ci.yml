@@ -46,6 +46,6 @@ jobs:
         key: ${{ secrets.EC2_KEY }}
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/node:latest
-          docker stop my-app || true
-          docker rm my-app || true
-          docker run -d -p 3333:3333 --name my-app ${{ secrets.DOCKER_USERNAME }}/node:latest
+          docker stop node || true
+          docker rm node || true
+          docker run -d -p 3333:3333 --name node ${{ secrets.DOCKER_USERNAME }}/node:latest
