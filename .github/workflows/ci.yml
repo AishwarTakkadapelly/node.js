@@ -50,18 +50,18 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
-    - - name: Transfer Files via SSH
-    env:
-      SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-      EC2_HOST: ${{ secrets.EC2_HOST }}
-      EC2_USER: ${{ secrets.EC2_USER }}
-    run: |
-      mkdir -p ~/.ssh
-      echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-      chmod 600 ~/.ssh/id_rsa
-      ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
-      rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./ $EC2_USER@$EC2_HOST:/home/root/app/
-  
+    - name: Transfer Files via SSH
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+        EC2_HOST: ${{ secrets.EC2_HOST }}
+        EC2_USER: ${{ secrets.EC2_USER }}
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
+        rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./ $EC2_USER@$EC2_HOST:/home/ubuntu/app/
+
     - name: Install Dependencies on EC2 and Start App
       env:
         SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
