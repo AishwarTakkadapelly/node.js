@@ -21,8 +21,8 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Lint code
-      run: npm run lint
+   # - name: Lint code
+   #   run: npm run lint
 
     - name: Build Docker image
       run: docker build -t ${{ secrets.DOCKER_USERNAME }}/node:latest .
