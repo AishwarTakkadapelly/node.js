@@ -26,7 +26,8 @@ jobs:
     - name: Build Docker Image
       run: |
         docker build -t ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} .
-        docker tag ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}
+        # Remove or correct the incorrect tag command if you don’t need it
+        # docker tag ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} ${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}
 
   deploy:
     runs-on: ubuntu-latest
