@@ -26,12 +26,12 @@ jobs:
       run: npm install
 
     # Optional: Run Tests
-    #- name: Run Tests
-    # run: npm test
+    # - name: Run Tests
+    #   run: npm test
 
-    # Build the Project
-    - name: Build Project
-      run: npm run build  # Assuming you have a build script
+    # Remove or comment out if not needed
+    # - name: Build Project
+    #   run: npm run build
 
   deploy:
     runs-on: ubuntu-latest
