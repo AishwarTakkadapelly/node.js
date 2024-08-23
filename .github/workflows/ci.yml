@@ -27,8 +27,9 @@ jobs:
     - name: Ensure tsnd has execute permissions
       run: chmod +x ./node_modules/.bin/tsnd
 
-    - name: Run application
-      run: npx tsnd --transpile-only --respawn --ignore-watch node_modules src/server.ts
+    - name: Run tests
+      run: npm test
+      continue-on-error: true # Optional: continue pipeline even if tests fail
 
     - name: Build Docker image
       run: |
