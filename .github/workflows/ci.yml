@@ -24,14 +24,20 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Build application
-      run: npm run start
+    - name: Ensure tsnd has execute permissions
+      run: chmod +x ./node_modules/.bin/tsnd
+
+    - name: Run application
+      run: npx tsnd --transpile-only --respawn --ignore-watch node_modules src/server.ts
 
     - name: Build Docker image
       run: |
         docker build -t ${{ secrets.DOCKER_USERNAME }}/node:latest .
 
-    - name: Push Docker image
+    - name: Log in to Docker Hub
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Push Docker image
+      run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/node:latest
