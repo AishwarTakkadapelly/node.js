@@ -21,11 +21,16 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
+
+    - name: Ensure tsnd has execute permissions
+    run: chmod +x ./node_modules/.bin/tsnd
+
+
     # Commented out to ignore tests
     # - name: Run Tests
     #   run: npm test
 
-    - name: Build Project
+    - name: Build 
       run: npm run start
 
   deploy:
