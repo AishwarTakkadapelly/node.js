@@ -33,57 +33,42 @@ jobs:
         docker push ${{ secrets.DOCKER_USERNAME }}/node:latest
 
   deploy:
-    needs: build
     runs-on: ubuntu-latest
-    environment: production
+    needs: build  # Make sure deploy only runs after build
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Setup SSH key
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.EC2_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            # Ensure Docker is installed
+            if ! command -v docker &> /dev/null; then
+              echo "Docker not found, installing..."
+              sudo yum update -y
+              sudo yum install -y docker
+              sudo systemctl start docker
+              sudo systemctl enable docker
+              sudo usermod -aG docker ${{ secrets.EC2_USER }}
+            fi
 
-    - name: Install SSH Client
-      run: sudo apt-get update -qq && sudo apt-get install -qqy openssh-client
-
-    - name: Deploy to EC2
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        port: 22
-        script: |
-          set -e
-          echo "Starting deployment on EC2 instance..."
-          
-          # Check Docker status and install if necessary
-          if ! command -v docker &> /dev/null; then
-            echo "Docker not found, installing..."
-            sudo yum install -y docker
-            sudo systemctl start docker
-            sudo systemctl enable docker
-            sudo usermod -aG docker $USER
-            echo "Docker installed and started."
-          else
-            echo "Docker is already installed."
-          fi
-
-          echo "Pulling Docker image..."
-          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/node:latest
-
-          echo "Stopping and removing old container..."
-          sudo docker stop node || true
-          sudo docker rm node || true
-
-          echo "Running new container..."
-          sudo docker run -d -p 3333:3333 --name node ${{ secrets.DOCKER_USERNAME }}/node:latest
-
-          echo "Deployment complete."
-        timeout: 30s
-        command_timeout: 10m
-        debug: true
+            # Pull Docker image and run container
+            echo "Pulling Docker image..."
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/node:latest
+    
+            # Stop and remove any running container with the same name
+            if [ "$(sudo docker ps -a -q -f name=my-app)" ]; then
+              echo "Stopping and removing existing container..."
+              sudo docker stop node || true
+              sudo docker rm node || true
+            fi
+ 
+            # Run new container
+            echo "Running new container..."
+            sudo docker run -d -p 3333:3333 --name node ${{ secrets.DOCKER_USERNAME }}/node:latest
