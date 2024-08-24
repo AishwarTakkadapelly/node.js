@@ -16,5 +16,5 @@ COPY . .
 # Expose the port the app runs on
 EXPOSE 3333
 
-# Command to run the application
+# Command to run the applications
 CMD ["npm", "run", "start"]
